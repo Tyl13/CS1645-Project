@@ -1,35 +1,17 @@
 defmodule Matrices do
   def mapsFun(x) do
-  	matrix_a =map_A(x,x)
-  	matrix_b =map_B(x,x)
-  	empty = empty_map(x,x)
-  	IO.inspect Map.fetch(matrix_a, {x,x})
-  	IO.inspect Map.fetch(matrix_b, {x,x})
-  	IO.inspect Map.fetch(empty, {x,x})
+  	matrix_a =map_A(x)
+    weight = map_A(x)
+  	matrix_b =map_B(x)
+    Enum.to_list(matrix_a)
   end
 
-  def map_A(size_x, size_y) do
-    Enum.reduce(1..size_x, %{}, fn x, acc ->
-      Enum.reduce(1..size_y, acc, fn y, acc ->
-          Map.put(acc, {x, y}, x*size_x+y)
-      end)
-    end)
+  def map_A(size) do
+    Stream.map(1..(size*size), &(Integer.floor_div((&1-1), size)*size+Integer.mod((&1-1), size)))
   end
 
-  def map_B(size_x, size_y) do
-    Enum.reduce(1..size_x, %{}, fn x, acc ->
-      Enum.reduce(1..size_y, acc, fn y, acc ->
-          Map.put(acc, {x, y}, y*size_y+x)
-      end)
-    end)
-  end
-
-  def empty_map(size_x, size_y) do
-    Enum.reduce(1..size_x, %{}, fn x, acc ->
-      Enum.reduce(1..size_y, acc, fn y, acc ->
-          Map.put(acc, {x, y}, 0)
-      end)
-    end)
+  def map_B(size) do
+    Stream.map(1..(size*size), &(Integer.mod((&1-1), size)*size+Integer.mod((&1-1), size)))
   end
 
 end
