@@ -1,13 +1,9 @@
 defmodule Matrices do
   def mapsFun(x) do
   	matrix_a =map_A(x)
-    IO.puts "A done"
     weight = map_A(x)
-    IO.puts "Weight done"
   	matrix_b =map_B(x)
-    IO.puts "B done"
-    outputArray = empty_map(x)
-    IO.puts "empty done"
+    outputArray = Stream.map(0..0, fn x -> (x*0) end)
     output = Enum.sum(updateTwo(matrix_a, matrix_b, weight, outputArray, 0, 0, x))
 
   end
@@ -21,36 +17,26 @@ defmodule Matrices do
   end
 
   def update(inputArrayA, weight, outputArray, i, j, size) do
-    IO.puts "In update"
     Stream.map(0..size-1, &(Enum.at(inputArrayA, i*size+&1)*Enum.at(weight, &1*size+j)))
     |> Enum.sum
   end
 
   def updateTwo(inputArrayA, inputArrayB, weight, outputArray, i, j, size) do
-    IO.puts i
-    IO.puts j
     cond do
       j == size and i != size ->
         updateTwo(inputArrayA, inputArrayB, weight, outputArray, i+1, 0, size)
+
       j < size and i < size->
-        partialSum = update(inputArrayA, weight, outputArray, i, j, size)
-        IO.puts "Done with update"
-        partialSum = partialSum+Enum.at(inputArrayB, i*size+j)
-        IO.puts partialSum
-        IO.puts "Done with B"
-        outputArray = Map.put(outputArray, {i, j}, partialSum)
-        IO.puts "About to update"
+        partial = update(inputArrayA, weight, outputArray, i, j, size)
+
+        hold = Stream.map([i*1024+j], fn x -> (partial+Enum.at(inputArrayB, i*size+j)) end)
+
+        outputArray = Stream.concat(outputArray, hold)
+
         updateTwo(inputArrayA, inputArrayB, weight, outputArray, i, j+1, size)
+
       i == size ->
         outputArrayC = outputArray
     end
   end
-
-  def empty_map(x) do
-    Stream.cycle(0..0)
-    |> Enum.take(x*x)
-    |> Enum.chunk_every(1)
-    |> Map.new(fn [Integer.floor_div(k, x), Integer.mod(k, x)] -> {k} end)
-  end
-
 end
