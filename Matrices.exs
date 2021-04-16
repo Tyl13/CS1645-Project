@@ -3,8 +3,9 @@ defmodule Matrices do
   	matrix_a =map_A(x)
     weight = map_A(x)
   	matrix_b =map_B(x)
-    Enum.to_list(matrix_a)
+    IO.inspect Enum.to_list(matrix_a)
     Enum.to_list(matrix_b)
+
   end
 
   def map_A(size) do
