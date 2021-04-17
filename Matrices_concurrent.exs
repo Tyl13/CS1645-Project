@@ -1,13 +1,23 @@
 defmodule Matrices do
-  def mapsFun(x,) do
-  	matrix_a =map_A(x)
-    weight = map_A(x)
-  	matrix_b =map_B(x)
+  def mapsFun(id, size, num_of_processes) do
+    id = id-1
+  	matrix_a =map_A(size)
+    weight = map_A(size)
+  	matrix_b =map_B(size)
     outputArray = Stream.map(0..0, fn x -> (x*0) end)
     # spawn process
     # do math to get starting and ending points for each process.
     # convert starting point into i and j spot
-    output = Enum.sum(updateTwo(matrix_a, matrix_b, weight, outputArray, 0, 0, x))
+    total = size*size
+    # size = 100
+    # num_process = 9
+    # multi = 11
+    # remainder = 1
+    multi = div(size, num_of_processes)
+    remainder = rem(size, num_of_processes)
+    starting_spot = id*multi
+    ending_spot = if id != (num_of_processes-1), do: multi*(id+1), else: multi*(id+1)+remainder
+    output = Enum.sum(updateTwo(matrix_a, matrix_b, weight, outputArray, starting_spot, 0, size, ending_spot))
     # communicate partial sums back, and then sum together to get final sum.
 
   end
@@ -31,12 +41,12 @@ defmodule Matrices do
     # outputArrayC[i][j] is returned.
   end
 
-  def updateTwo(inputArrayA, inputArrayB, weight, outputArray, i, j, size) do
+  def updateTwo(inputArrayA, inputArrayB, weight, outputArray, i, j, size, ending_spot) do
     cond do
-      j == size and i != size ->
-        updateTwo(inputArrayA, inputArrayB, weight, outputArray, i+1, 0, size)
+      j == size and i != ending_spot ->
+        updateTwo(inputArrayA, inputArrayB, weight, outputArray, i+1, 0, size, ending_spot)
 
-      j < size and i < size->
+      j < size and i < ending_spot->
         partial = update(inputArrayA, weight, outputArray, i, j, size)
 
         hold = Stream.map([i*1024+j], fn x -> (partial+Enum.at(inputArrayB, i*size+j)) end)
@@ -47,16 +57,10 @@ defmodule Matrices do
         # This concats the Stream that is in hold onto outputArray in the next location.
         # So, outputArray would now holds  outputArrayC[0][0]...outputArrayC[i][j-1] + outputArrayC[i][j]
 
-        updateTwo(inputArrayA, inputArrayB, weight, outputArray, i, j+1, size)
+        updateTwo(inputArrayA, inputArrayB, weight, outputArray, i, j+1, size, ending_spot)
 
-      i == size ->
+      i == ending_spot ->
         outputArrayC = outputArray
     end
-  end
-end
-
-defmodule  TaskManager do
-  def sync do
-    task
   end
 end
