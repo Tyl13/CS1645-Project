@@ -1,4 +1,7 @@
 defmodule Matrices do
+  def main(matrix, numberProcesses) do
+    Task.async_stream(1..numberProcesses, Matrices, :mapsFun, [matrix, numberProcesses], timeout: 1000000) |> Enum.map(fn{:ok, result} -> result end) |> Enum.sum()
+  end
   def mapsFun(id, size, num_of_processes) do
     id = id-1
   	matrix_a =map_A(size)
