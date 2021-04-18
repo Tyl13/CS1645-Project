@@ -1,6 +1,12 @@
 defmodule Matrices do
   def main(matrix, numberProcesses) do
-    Task.async_stream(1..numberProcesses, Matrices, :mapsFun, [matrix, numberProcesses], timeout: 1000000) |> Enum.map(fn{:ok, result} -> result end) |> Enum.sum()
+    starttime = DateTime.utc_now()
+
+    IO.puts Task.async_stream(1..numberProcesses, Matrices, :mapsFun, [matrix, numberProcesses], timeout: 1000000) |> Enum.map(fn{:ok, result} -> result end) |> Enum.sum()
+
+    endtime = DateTime.utc_now()
+
+    IO.puts "#{DateTime.diff(endtime, starttime, :second)} seconds"
   end
   def mapsFun(id, size, num_of_processes) do
     id = id-1

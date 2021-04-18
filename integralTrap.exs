@@ -4,7 +4,7 @@ defmodule TrapIntegral do
         IO.puts Task.async_stream(1..numberProcesses, TrapIntegral, :trapezoidFun, [numberProcesses], timeout: 1000000) |> Enum.map(fn{:ok, result} -> result end) |> Enum.sum()
         endtime = DateTime.utc_now()
 
-        IO.puts "#{DateTime.diff(endtime, starttime, :second)} seconds"
+        IO.puts "#{DateTime.diff(endtime, starttime, :microsecond)} microseconds"
     end
 
     def trapezoidFun(id, num_of_processes) do
